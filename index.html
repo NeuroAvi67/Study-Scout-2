@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Study Scout India (Multi-AI)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Figtree:wght@400;500;600&family=Noto+Sans+Devanagari:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#050B18;--bg2:#0A1428;--surface:#0D1A33;--ink:#E9EEFB;--muted:#9AA7CC;--line:rgba(130,165,255,.2);--line2:rgba(130,165,255,.34);--brand:#F5C94C;--brand-ink:#1A1405;--mark:#F5C94C;--mark-ink:#1A1405;--soft:rgba(79,216,240,.09);--cyan:#4FD8F0;--good:#4CD3A4;--warn:#FF8A73;--goodbg:rgba(76,211,164,.14);--warnbg:rgba(255,138,115,.13);--serif:"Cormorant Garamond","Noto Sans Devanagari",Georgia,serif}
+*{box-sizing:border-box}
+html{color-scheme:dark}
+body{margin:0;min-height:100vh;font:16px/1.55 Figtree,"Noto Sans Devanagari",system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);background:
+radial-gradient(1px 1px at 12% 22%,rgba(255,255,255,.55),transparent),radial-gradient(1px 1px at 78% 14%,rgba(255,255,255,.45),transparent),radial-gradient(1.5px 1.5px at 92% 38%,rgba(245,201,76,.7),transparent),radial-gradient(1px 1px at 6% 61%,rgba(255,255,255,.4),transparent),radial-gradient(1px 1px at 88% 72%,rgba(255,255,255,.35),transparent),radial-gradient(1.5px 1.5px at 30% 90%,rgba(79,216,240,.55),transparent),
+radial-gradient(900px 520px at 88% -8%,rgba(60,110,255,.17),transparent 62%),radial-gradient(800px 500px at -12% 34%,rgba(245,201,76,.06),transparent 60%),var(--bg);background-attachment:fixed}
+h1,h2,h3{font-family:var(--serif);letter-spacing:-.005em;line-height:1.12;margin:0}
+h1{font-size:clamp(32px,6vw,46px);font-weight:600}
+h3{font-size:21px;font-weight:600}
+p{margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--brand);outline-offset:3px}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+svg{flex:none}
+.wrap{max-width:900px;margin:0 auto;padding:18px clamp(14px,4vw,32px) 72px}
+
+/* header */
+.top{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.logo{display:flex;align-items:center;gap:12px;flex:none}
+.logo svg{filter:drop-shadow(0 0 10px rgba(245,201,76,.35))}
+.vr{width:1px;height:50px;background:linear-gradient(transparent,rgba(245,201,76,.55),transparent)}
+.wm{display:flex;flex-direction:column;gap:3px}
+.wm b{font:700 clamp(19px,5.4vw,27px)/1.06 var(--serif);letter-spacing:.26em;color:#F6EBC6}
+.wm b em{font-style:normal;color:var(--brand)}
+.wm small{font-size:9.5px;letter-spacing:.32em;color:var(--muted)}
+.agent{display:flex;gap:8px;align-items:flex-start;margin-right:auto;padding-left:14px;border-left:1px solid var(--line);font-size:10.5px;letter-spacing:.2em;line-height:1.55;color:var(--muted)}
+.live{width:8px;height:8px;margin-top:4px;border-radius:50%;background:#3DDC84;box-shadow:0 0 9px #3DDC84;flex:none}
+.stripe{height:5px;border-radius:99px;margin:0 0 20px;background:linear-gradient(90deg,#F5C94C,#FF6B7A 22%,#C050E0 44%,#8A5CFF 58%,#4FD8F0 82%,#3B7BFF);box-shadow:0 0 14px rgba(138,92,255,.35),0 0 0 1px rgba(130,165,255,.25)}
+
+/* buttons & fields */
+.btn{border:1px solid var(--line2);background:rgba(13,26,51,.85);padding:10px 16px;border-radius:12px;font-weight:600;cursor:pointer;transition:border-color .15s,background .15s}
+.btn:hover{border-color:var(--brand);background:rgba(245,201,76,.07)}
+.btn.primary{background:linear-gradient(180deg,#FBD965,#E9B92F);color:var(--brand-ink);border-color:transparent;box-shadow:0 6px 22px -8px rgba(245,201,76,.55)}
+.btn.primary:hover{background:linear-gradient(180deg,#FFE17A,#F0C23E)}
+.btn.danger{color:var(--warn)}
+.btn.sm{padding:5px 10px;font-size:14px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.big{padding:14px 24px;font-size:17px;border-radius:14px}
+.gear{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:16px;font-weight:500;line-height:1.15;text-align:left;color:var(--ink)}
+.gear>svg:first-child{color:var(--cyan)}
+.gear>svg:last-child{color:var(--muted)}
+input,select,textarea{width:100%;background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+input::placeholder,textarea::placeholder{color:#6676A3}
+select.mini{width:auto;padding:9px 10px}
+textarea{resize:vertical;min-height:80px}
+label{display:flex;flex-direction:column;gap:4px;font-size:14px;color:var(--muted);font-weight:500}
+label.chk{flex-direction:row;align-items:center;gap:0;color:var(--ink);font-weight:600;font-size:15px}
+label.chk input{width:auto;margin-right:8px;accent-color:var(--brand)}
+
+/* surfaces */
+.panel{background:linear-gradient(180deg,rgba(19,36,72,.7),rgba(9,18,40,.78));border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:inset 0 1px 0 rgba(255,255,255,.04),0 24px 50px -32px #000}
+.panel.bare{background:none;border:0;padding:0;box-shadow:none}
+.hint{padding:10px 14px;border-radius:12px;background:var(--soft);border:1px solid rgba(79,216,240,.22);font-size:14px;margin-bottom:16px}
+.hint[style*=fixed]{background:#10203f}
+
+/* topic chips */
+.chips{display:flex;gap:10px;margin:0 -4px 6px;padding:4px;overflow-x:auto;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1px solid var(--line);background:rgba(13,26,51,.8);padding:7px 14px;border-radius:99px;font-weight:500;cursor:pointer;max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;transition:border-color .15s,box-shadow .15s}
+.chip:hover{border-color:var(--line2)}
+.chip[aria-pressed=true]{border-color:var(--brand);background:rgba(245,201,76,.07);box-shadow:0 0 0 1px rgba(245,201,76,.25),0 0 22px -6px rgba(245,201,76,.45)}
+#lib .chip{display:flex;align-items:center;gap:12px;height:54px;padding:0 20px 0 10px}
+#lib .ci{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:var(--cyan);background:rgba(79,216,240,.08);flex:none}
+#lib .chip[aria-pressed=true] .ci{color:var(--brand);background:rgba(245,201,76,.1)}
+#lib .cl{overflow:hidden;text-overflow:ellipsis}
+.chips.wrap{flex-wrap:wrap;overflow:visible;margin:0}
+.chips.wrap .chip{border-color:var(--line)}
+
+/* project hero */
+.hero{position:relative;display:flex;align-items:center;gap:16px;margin:20px 0 18px;min-height:132px}
+.hero>*{position:relative;z-index:1}
+.hero .hex{flex:none;filter:drop-shadow(0 0 12px rgba(79,216,240,.3))}
+.hero h1{font-size:clamp(36px,9vw,58px);font-weight:600;line-height:1.02;color:#F4F6FF}
+.hero .meta{margin-top:6px;font-size:clamp(14px,3.6vw,17px);color:#8FA0D4}
+.hero .orb{position:absolute;z-index:0;right:-8px;top:-22px;width:min(44%,250px);opacity:.8;pointer-events:none}
+
+/* tabs */
+.seg{display:flex;background:rgba(10,20,42,.85);border:1px solid var(--line);border-radius:18px;padding:6px 4px;margin:0 0 18px;overflow-x:auto;scrollbar-width:none}
+.seg::-webkit-scrollbar{display:none}
+.seg button{position:relative;flex:1 0 auto;display:flex;align-items:center;justify-content:center;gap:9px;border:0;background:none;padding:13px 16px;font-weight:500;color:var(--muted);cursor:pointer;white-space:nowrap}
+.seg button+button::before{content:"";position:absolute;left:0;top:22%;bottom:22%;width:1px;background:var(--line)}
+.seg button[aria-pressed=true]{color:var(--brand)}
+.seg button[aria-pressed=true]::after{content:"";position:absolute;left:14%;right:14%;bottom:-6px;height:3px;border-radius:3px;background:var(--brand);box-shadow:0 0 12px rgba(245,201,76,.7)}
+.seg button svg{width:22px;height:22px}
+.seg.inner{display:inline-flex;margin:0 0 16px;padding:3px;gap:2px;border-radius:99px}
+.seg.inner button{padding:8px 16px;border-radius:99px;font-weight:600;gap:0}
+.seg.inner button::before,.seg.inner button::after{display:none}
+.seg.inner button[aria-pressed=true]{background:var(--brand);color:var(--brand-ink)}
+
+/* plan */
+.lead{display:flex;gap:16px;align-items:flex-start;padding:18px;margin-bottom:16px;border:1px solid var(--line);border-radius:18px;background:linear-gradient(135deg,rgba(22,42,86,.7),rgba(9,18,40,.8))}
+.lead .ic{flex:none;width:54px;height:54px;border-radius:15px;display:grid;place-items:center;color:var(--cyan);border:1px solid rgba(79,216,240,.45);background:rgba(79,216,240,.08);box-shadow:0 0 20px rgba(79,216,240,.16)}
+.lead .ic svg{width:28px;height:28px}
+.lead>div>p{font-size:clamp(17px,4.4vw,21px);line-height:1.5;color:#C3CEEF}
+.lead strong{color:var(--brand);font-weight:600}
+.day{position:relative;margin-bottom:16px;padding:20px 20px 12px 22px;border:1px solid var(--line);border-left:3px solid var(--brand);border-radius:18px;overflow:hidden;background:linear-gradient(160deg,rgba(20,38,78,.72),rgba(8,17,38,.82))}
+.day::after{content:"";position:absolute;right:12px;top:8px;width:120px;height:110px;opacity:.55;pointer-events:none;background:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 110' fill='none' stroke='%234F8CFF' stroke-opacity='.6'><path d='M60 6 112 40 98 88 40 104 8 60zM60 6 40 104M60 6 98 88M8 60 112 40M8 60 98 88'/><circle cx='60' cy='6' r='2.5' fill='%23F5C94C' stroke='none'/><circle cx='112' cy='40' r='2' fill='%23F5C94C' stroke='none'/><circle cx='8' cy='60' r='2' fill='%23F5C94C' stroke='none'/></svg>") no-repeat}
+.dayhead,.day .prev{position:relative;z-index:1}
+.dayhead{display:flex;align-items:center;gap:16px;padding-bottom:14px;border-bottom:1px solid var(--line);margin-right:70px}
+.dayno{flex:none;width:64px;min-width:64px;height:64px;padding:0 4px;border-radius:99px;display:grid;place-items:center;border:2px solid var(--brand);color:var(--brand);font-size:16px;line-height:1.1;text-align:center;box-shadow:0 0 16px rgba(245,201,76,.18)}
+.day h3{font-size:clamp(22px,5.4vw,28px);padding-left:16px;border-left:1px solid var(--line);font-weight:600}
+.day .prev{margin-right:0}
+.day .prev ul{list-style:none;padding:0;margin:14px 0 6px}
+.day .prev li{position:relative;padding-left:28px;margin:10px 0;color:#C3CEEF;line-height:1.7}
+.day .prev li::before{content:"";position:absolute;left:5px;top:.62em;width:9px;height:9px;border-radius:50%;background:var(--brand);box-shadow:0 0 9px rgba(245,201,76,.6)}
+
+/* notes text size */
+.notebar{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.fsz{display:inline-flex;align-items:center;gap:2px;padding:3px;border:1px solid var(--line);border-radius:99px;background:rgba(10,20,42,.85);margin:0 0 16px}
+.fsz button{border:0;background:none;min-width:40px;height:34px;padding:0 10px;border-radius:99px;font-weight:600;color:var(--ink);cursor:pointer}
+.fsz button:hover:not(:disabled){background:rgba(245,201,76,.12);color:var(--brand)}
+.fsz button:disabled{opacity:.35;cursor:not-allowed}
+.fsz .lg{font-size:19px}
+.fsz .pct{min-width:52px;font-size:13px;font-weight:500;color:var(--muted)}
+.prev.notes{line-height:1.65}
+.prev.notes h2,.prev.notes h3,.prev.notes h4{font-size:1.45em}
+
+/* notes length */
+.lenctl{display:flex;align-items:center;gap:6px;width:100%;margin:0 0 12px;padding:4px;border:1px solid var(--line);border-radius:99px;background:rgba(10,20,42,.85)}
+.lenctl>button{flex:none;border:0;background:none;height:42px;padding:0 16px;border-radius:99px;font-weight:600;color:var(--ink);cursor:pointer;white-space:nowrap}
+.lenctl>button:hover:not(:disabled){background:rgba(245,201,76,.12);color:var(--brand)}
+.lenctl>button:disabled{opacity:.35;cursor:not-allowed}
+.lenmid{flex:1;display:flex;flex-direction:column;align-items:center;line-height:1.2;min-width:0}
+.lenmid b{color:var(--brand);font-weight:600}
+.lenmid small{font-size:12px;color:var(--muted)}
+.lendots{display:flex;gap:5px;margin-top:4px}
+.lendots i{width:16px;height:4px;border-radius:4px;background:var(--line2)}
+.lendots i.on{background:var(--brand);box-shadow:0 0 6px rgba(245,201,76,.6)}
+@media (max-width:420px){.lenctl>button{padding:0 10px;font-size:14px}}
+
+/* layout helpers */
+.form{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.form .full{grid-column:1/-1}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.between{justify-content:space-between}
+.prev{overflow-wrap:anywhere}
+.prev h2,.prev h3,.prev h4{margin:22px 0 6px;font-family:var(--serif);font-weight:600;font-size:23px;color:#F4E7BE}
+.prev p{margin:8px 0}
+.prev ul{padding-left:22px;margin:8px 0}
+.prev li::marker{color:var(--brand)}
+.prev strong{color:#F6EBC6}
+.math{font-family:"Cambria Math","STIX Two Math",Georgia,serif;white-space:nowrap}.math.disp{display:block;text-align:center;margin:8px 0;white-space:normal}.math .fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;font-size:.9em;margin:0 2px}.math .fr>span:first-child{border-bottom:1px solid currentColor;padding:0 2px}.math .mt{display:inline-flex;flex-direction:column;vertical-align:middle;margin:0 3px}.math .mt>span{display:flex;gap:12px;justify-content:center}.math .mt i{font-style:normal;min-width:1ch;text-align:center}.math .rt{border-top:1px solid currentColor;padding:0 1px}
+.prev code{background:var(--bg2);border:1px solid var(--line);padding:2px 6px;border-radius:6px;font-size:.9em}
+.stack{display:flex;flex-direction:column;gap:12px}
+details{border:1px solid var(--line);border-radius:14px;padding:12px 16px;background:rgba(13,26,51,.7)}
+details[open]{border-color:var(--line2)}
+summary{cursor:pointer;font-weight:600}
+details p{margin-top:8px;color:var(--muted)}
+details textarea{margin-top:10px;min-height:120px}
+.opts{display:flex;flex-direction:column;gap:8px;margin:12px 0 4px}
+.opt{text-align:left;border:1px solid var(--line);background:var(--bg2);border-radius:12px;padding:10px 14px;cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--brand)}
+.opt.right{background:var(--goodbg);border-color:var(--good)}
+.opt.wrong{background:var(--warnbg);border-color:var(--warn)}
+.opt:disabled{cursor:default}
+.src{display:block;text-decoration:none;color:inherit;padding:14px 16px;border:1px solid var(--line);border-radius:14px;background:rgba(13,26,51,.7)}
+.src:hover{border-color:var(--brand)}
+.src b{display:block;color:var(--brand)}
+.tagt{display:inline-block;font-size:12px;font-weight:600;padding:1px 10px;border-radius:99px;background:var(--brand);color:var(--brand-ink);margin-right:8px}
+.src small{display:block;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chat{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+.msg{padding:12px 16px;border-radius:16px;max-width:96%;overflow-wrap:anywhere}
+.msg.user{align-self:flex-end;background:rgba(245,201,76,.12);border:1px solid rgba(245,201,76,.45)}
+.msg.ai{align-self:flex-start;background:rgba(13,26,51,.85);border:1px solid var(--line)}
+.msg p{margin:4px 0}
+.msg details{margin:8px 0;background:var(--bg2)}
+.err{padding:14px 16px;border-radius:14px;background:var(--warnbg);border:1px solid var(--warn);display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.load{display:flex;align-items:center;gap:12px;padding:28px 4px;color:var(--muted)}
+.spin{width:18px;height:18px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--brand);animation:sp .8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.score{font-family:var(--serif);font-size:30px;font-weight:700;color:var(--brand)}
+.prov{border:1px solid var(--line);border-radius:14px;padding:14px;background:var(--bg2)}
+.prov .form{margin:12px 0 8px}
+.dot{display:inline-block;width:12px;height:12px;border-radius:50%;margin:0 8px 0 0;flex:none}
+.second{margin-top:14px;padding:14px 16px;border-radius:14px;border:1px dashed var(--cyan);background:var(--soft)}
+.fig svg{width:100%;height:auto;display:block;border-radius:14px;border:1px solid var(--line);background:#07101F}
+.flow{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.step{flex:1 1 140px;border:1px solid var(--line);border-radius:14px;padding:10px 12px;background:var(--bg2);font-weight:500}
+.step b{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--brand);color:var(--brand-ink);margin-right:6px;font-size:13px}
+.pic img{width:100%;min-height:200px;border-radius:14px;border:1px solid var(--line);background:var(--soft);display:block;margin-bottom:12px}
+@media (max-width:640px){.form{grid-template-columns:1fr}.day::after{opacity:.35}.dayhead{margin-right:0}}
+@media (max-width:480px){.agent{display:none}.top{justify-content:space-between}.logo svg{width:44px;height:44px}.hero .orb{opacity:.55}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.spin{border-top-color:var(--line);border-right-color:var(--brand)}}
+</style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" onload="try{render()}catch(e){}"></script>
+<style>.kx{display:inline-block;max-width:100%;overflow-x:auto;overflow-y:hidden;vertical-align:middle}.kx.disp{display:block;margin:8px 0}.kx .katex{font-size:1.05em}.kx .katex-display{margin:2px 0}</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><div class="logo"><svg viewBox="0 0 64 64" width="54" height="54" fill="none" aria-hidden="true"><ellipse cx="32" cy="32" rx="28" ry="13" transform="rotate(-35 32 32)" stroke="#F5C94C" stroke-width="1.5"/><ellipse cx="32" cy="32" rx="21" ry="9" transform="rotate(-35 32 32)" stroke="#4FD8F0" stroke-opacity=".5"/><circle cx="32" cy="32" r="5" fill="#F5C94C"/><circle cx="50" cy="16" r="1.8" fill="#4FD8F0"/></svg><span class="vr"></span><div class="wm"><b>STUDY<br><em>SCOUT</em></b><small>INTELLIGENCE</small></div></div><div class="agent"><i class="live"></i><span>MULTI-AGENT<br>INTELLIGENCE</span></div><button class="btn gear" data-act="settings"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M5.5 18.5l1.7-1.7M16.8 7.2l1.7-1.7"/></svg><span>AI &amp;<br>settings</span><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button></div>
+  <div class="stripe"></div>
+  <section class="panel" id="set" hidden style="margin-bottom:16px"></section>
+  <div id="hint"></div>
+  <div class="chips" id="lib"></div>
+  <main id="main"></main>
+</div>
+
+<script>
+(function(){
+'use strict';
+const $=(s,r=document)=>r.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid=()=>Math.random().toString(36).slice(2,9)+Date.now().toString(36).slice(-4);
+const COL=['#FFB400','#FF5D8F','#3347E6','#10C9A0','#8A4DFF','#FF8A3D'];
+
+/* ---------- AI providers: add as many as you like ---------- */
+const KINDS={
+  gemini:{label:'Google Gemini',model:'gemini-2.5-flash-lite',nk:1,hint:'Free key at aistudio.google.com/apikey.'},
+  openai:{label:'OpenAI (ChatGPT)',base:'https://api.openai.com/v1',model:'gpt-4o-mini',nk:1,hint:'Key at platform.openai.com/api-keys.'},
+  anthropic:{label:'Claude (Anthropic)',model:'claude-haiku-5-5',nk:1,hint:'Key at console.anthropic.com.'},
+  groq:{label:'Groq (Llama, very fast)',base:'https://api.groq.com/openai/v1',model:'llama-3.3-70b-versatile',nk:1,hint:'Free key at console.groq.com/keys.'},
+  openrouter:{label:'OpenRouter (many models)',base:'https://openrouter.ai/api/v1',model:'openrouter/auto',nk:1,hint:'Key at openrouter.ai/keys. Some models are free.'},
+  mistral:{label:'Mistral',base:'https://api.mistral.ai/v1',model:'mistral-small-latest',nk:1,hint:'Key at console.mistral.ai.'},
+  deepseek:{label:'DeepSeek',base:'https://api.deepseek.com/v1',model:'deepseek-chat',nk:1,hint:'Key at platform.deepseek.com.'},
+  pollinations:{label:'Pollinations (free, no key)',base:'https://text.pollinations.ai/openai',full:1,model:'openai',nokey:1,hint:'No key needed. Can be slow or busy.'},
+  claudebuiltin:{label:'Claude built-in (only inside Claude)',model:'claude-sonnet-4-6',nokey:1,hint:'No key. Works only when this page is opened inside Claude.'},
+  custom:{label:'Custom (OpenAI-compatible)',base:'',model:'',hint:'Any OpenAI-style URL, for example a local Ollama: http://localhost:11434/v1'}
+};
+const K=pv=>KINDS[pv.kind]||KINDS.custom;
+const mk=kind=>({id:uid(),kind,name:KINDS[kind].label.replace(/ \(.*/,''),model:KINDS[kind].model||'',key:'',base:KINDS[kind].base||'',on:true});
+const TASKS={plan:'Study plan',notes:'Notes',qna:'Q&A',cards:'Flashcards',quiz:'Quiz',visuals:'Visuals',tutor:'Tutor chat',check:'Cross-check'};
+
+/* ---------- storage (saves in Chrome; skipped inside previews that block it) ---------- */
+const KEY='studyscout-multi.v1';
+let persistent=true;
+let D={projects:[],providers:null,assign:{},fallback:true,cur:null,fs:100};
+try{localStorage.setItem('__t','1');localStorage.removeItem('__t');}catch(e){persistent=false;}
+if(persistent){try{const r=localStorage.getItem(KEY);if(r)Object.assign(D,JSON.parse(r));}catch(e){}}
+if(!Array.isArray(D.providers)||!D.providers.length)D.providers=['gemini','claudebuiltin','pollinations'].map(mk);
+function save(){if(!persistent)return;try{localStorage.setItem(KEY,JSON.stringify(D));}catch(e){persistent=false;}}
+const cur=()=>D.projects.find(p=>p.id===D.cur)||null;
+const usable=pv=>{const k=K(pv);if(!pv.on)return false;if(k.nk&&!(pv.key||'').trim())return false;if(pv.kind==='custom'&&(!pv.base||!pv.model))return false;return true;};
+
+/* ---------- calling any AI ---------- */
+class AIErr extends Error{constructor(m,soft){super(m);this.soft=soft;}}
+async function http(url,opt,name){
+  let r;try{r=await fetch(url,opt);}catch(e){throw new AIErr(name+': could not connect. Check your internet. Some AIs block use from a browser.',true);}
+  let d=null;try{d=await r.json();}catch(e){}
+  const em=d&&((d.error&&(d.error.message||(typeof d.error==='string'?d.error:'')))||d.message)||'';
+  if(r.status===401||r.status===403||(r.status===400&&/api key/i.test(em)))throw new AIErr(name+': key not accepted. Check it in AI & settings.',false);
+  if(r.status===429)throw new AIErr(name+': free limit reached. Wait about a minute.',true);
+  if(!r.ok)throw new AIErr(name+': '+(em||('request failed ('+r.status+')')),r.status>=500);
+  return d||{};
+}
+async function callProvider(pv,system,msgs,max=4000){
+  const k=K(pv),n=pv.name||k.label,model=(pv.model||k.model||'').trim(),key=(pv.key||'').trim();
+  let t='';
+  if(pv.kind==='gemini'){
+    const gen={maxOutputTokens:max};if(model.includes('2.5-flash'))gen.thinkingConfig={thinkingBudget:0};
+    const d=await http('https://generativelanguage.googleapis.com/v1beta/models/'+encodeURIComponent(model)+':generateContent',{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':key},body:JSON.stringify({systemInstruction:{parts:[{text:system}]},contents:msgs.map(m=>({role:m.role==='assistant'?'model':'user',parts:[{text:m.content}]})),generationConfig:gen})},n);
+    const c=(d.candidates||[])[0];t=((c&&c.content&&c.content.parts)||[]).map(p=>p.text||'').join('').trim();
+  }else if(pv.kind==='anthropic'||pv.kind==='claudebuiltin'){
+    const h={'Content-Type':'application/json'};
+    if(pv.kind==='anthropic'){h['x-api-key']=key;h['anthropic-version']='2023-06-01';h['anthropic-dangerous-direct-browser-access']='true';}
+    try{
+      const d=await http('https://api.anthropic.com/v1/messages',{method:'POST',headers:h,body:JSON.stringify({model,max_tokens:pv.kind==='anthropic'?max:1000,system,messages:msgs})},n);
+      t=(d.content||[]).map(b=>b.type==='text'?b.text:'').join('').trim();
+    }catch(e){if(pv.kind==='claudebuiltin')throw new AIErr(n+': works only inside Claude.',true);throw e;}
+  }else{
+    const url=k.full?pv.base:(pv.base||'').replace(/\/+$/,'')+'/chat/completions';
+    const h={'Content-Type':'application/json'};if(key)h.Authorization='Bearer '+key;
+    const d=await http(url,{method:'POST',headers:h,body:JSON.stringify({model,max_tokens:max,messages:[{role:'system',content:system},...msgs]})},n);
+    t=((d.choices&&d.choices[0]&&d.choices[0].message&&d.choices[0].message.content)||'').trim();
+  }
+  if(!t)throw new AIErr(n+': empty reply.',true);
+  return t;
+}
+const H={};
+function order(task,override,exclude){
+  if(override){const o=D.providers.find(x=>x.id===override);return o?[o]:[];}
+  let o=D.providers.filter(usable);const a=D.assign[task];
+  if(a&&a!=='auto'){const f=o.find(x=>x.id===a);if(f)o=[f,...o.filter(x=>x!==f)];}
+  const now=Date.now();
+  o=[...o.filter(x=>!(H[x.id]>now)),...o.filter(x=>H[x.id]>now)];
+  if(exclude)o=[...o.filter(x=>x.name!==exclude),...o.filter(x=>x.name===exclude)];
+  return D.fallback?o:o.slice(0,1);
+}
+async function ask(task,messages,{system=SYS,override,exclude,parse,max}={}){
+  const msgs=typeof messages==='string'?[{role:'user',content:messages}]:messages;
+  const list=order(task,override,exclude);
+  if(!list.length)throw new Error('No AI is ready. Open "AI & settings", turn one on and add its key.');
+  const errs=[];
+  for(const pv of list){
+    try{const t=await callProvider(pv,system,msgs,max);const v=parse?parse(t):t;delete H[pv.id];return {value:v,by:pv};}
+    catch(e){errs.push(e instanceof AIErr?e.message:(pv.name+': '+e.message));if(e.soft)H[pv.id]=Date.now()+60000;}
+  }
+  throw new Error(errs.length>1?'No AI worked. '+errs.join(' | '):errs[0]);
+}
+async function askAll(system,msgs){
+  const list=D.providers.filter(usable);
+  if(!list.length)throw new Error('No AI is ready. Open "AI & settings".');
+  const rs=await Promise.allSettled(list.map(pv=>callProvider(pv,system,msgs,1500)));
+  return rs.map((r,i)=>r.status==='fulfilled'?{by:list[i].name,text:r.value.trim()}:{by:list[i].name,err:r.reason.message});
+}
+
+const SYS='You are an expert tutor for the Indian education system. You know NCERT textbooks; the CBSE, ICSE/ISC and state-board patterns; national exams such as JEE, NEET, CUET, CLAT, NDA, UPSC, SSC, banking, GATE, CAT and UGC NET; and Indian university syllabi (UGC and AICTE). Align everything to the stated board, exam or course and its exam pattern. Use the terms, units and examples common in Indian textbooks. Write in the language the student asks for (for Hinglish, use Hindi written in English letters and keep technical terms in English). Syllabi and exam patterns are revised often: if you are unsure what is currently prescribed, say so and tell the student to confirm on the official website. Be accurate and concise. Never invent facts, formulas, page numbers, or past-paper details. Write every mathematical expression, symbol, unit exponent and formula in valid LaTeX between single dollar signs for inline ($x^2$) or double dollar signs for display ($$\\int_0^1 x\\,dx$$), with correct commands such as \\frac, \\sqrt, \\sum, \\int, \\lim, \\begin{pmatrix}. Never put plain text or currency inside dollar signs.';
+function parseJSON(t){
+  t=t.replace(/```json|```/g,'').trim();
+  const a=t.search(/[\[{]/);if(a<0)throw new Error('answered in an unexpected format.');t=t.slice(a);
+  try{return JSON.parse(t);}catch(e){}
+  try{return JSON.parse(t.slice(0,Math.max(t.lastIndexOf(']'),t.lastIndexOf('}'))+1));}catch(e){}
+  const st=[];let ins=false,bs=false,out='';
+  for(const c of t){out+=c;if(ins){if(bs)bs=false;else if(c==='\\')bs=true;else if(c==='"')ins=false;}else{if(c==='"')ins=true;else if(c==='{')st.push('}');else if(c==='[')st.push(']');else if(c==='}'||c===']')st.pop();}}
+  if(ins)out+='"';out=out.replace(/[,:]\s*$/,'');while(st.length)out+=st.pop();
+  try{return JSON.parse(out);}catch(e){throw new Error('answered in an unexpected format.');}
+}
+const ctx=p=>[['Stage',p.stage],['Board, exam or course',p.board],['Class, year or semester',p.grade],['Subject',p.subject],['Topic or chapter',p.topic],['Language',p.language||'English'],['Goal',p.goal],['Days available',p.days]].filter(x=>x[1]).map(x=>x[0]+': '+x[1]).join('\n');
+const bad=()=>new Error('answered in an unexpected format.');
+const NSPEC={brief:'Max 150 words, only the most exam-critical points as short one-line bullets.',short:'Max 250 words, brief bullets only.',standard:'Max 550 words.',detailed:'Up to 900 words, with extra worked examples.',full:'Up to 1400 words, in depth, with several worked examples, short derivations or reasoning, and a few practice questions at the end.'};
+const LV=[['brief','Brief',150],['short','Short',250],['standard','Standard',550],['detailed','Detailed',900],['full','Extensive',1400]];
+
+const GEN={
+  plan(p,o){return ask('plan',`${ctx(p)}\n\nWrite a study plan in Markdown, matched to this board, exam or course. Use ## headings per day (per week if more than 14 days), each with 2-4 concrete tasks as "- " bullets and one "Check yourself" line. Include revision and practice, and timed practice for competitive exams. Name the NCERT chapter or standard reference only when you are sure. End with a one-line revision tip. Max 450 words, in the stated language.`,{override:o});},
+  notes(p,o){return ask('notes',`${ctx(p)}\n\nWrite exam-ready study notes in Markdown with these ## sections: Big picture (2-3 sentences); Key concepts (each term in **bold** with the definition in the wording examiners expect, plus a tiny example); Formulas, laws, dates or articles (only if relevant, with standard units); Diagram to practise (what to draw and label; skip if not relevant); Common mistakes and examiner keywords; Quick revision (5 one-line points). ${NSPEC[p.nsize||'standard']} In the stated language.`,{override:o,max:6000});},
+  qna(p,o){return ask('qna',`${ctx(p)}\n\nReturn ONLY a JSON array of 5 exam-style questions in the pattern of the stated board, exam or course: [{"q":"","marks":3,"chance":"High or Medium","answer":"model answer in Markdown, sized for the marks","keywords":["terms examiners look for"]}]. "chance" is how likely this kind of question is to be asked. Use mark values that fit the pattern (for example 1, 2, 3 and 5 for school boards; 10 or 15 for UPSC and university papers; one worked, step-by-step problem for JEE, NEET or GATE style). These are practice questions, not real past papers. Write the text values in the stated language.`,{override:o,parse:t=>{const a=parseJSON(t);if(!Array.isArray(a)||!a.length||a.some(x=>!x||typeof x.q!=='string'||typeof x.answer!=='string'))throw bad();return a;}});},
+  cards(p,o){return ask('cards',`${ctx(p)}\n\nReturn ONLY a JSON array of 12 flashcards: [{"front":"short question","back":"answer in 1-2 sentences"}]. Cover the most important ideas first and use the terms from Indian textbooks. Write the text values in the stated language.`,{override:o,parse:t=>{const a=parseJSON(t);if(!Array.isArray(a)||!a.length||a.some(c=>!c||typeof c.front!=='string'||typeof c.back!=='string'))throw bad();return a;}});},
+  quiz(p,o){return ask('quiz',`${ctx(p)}\n\nReturn ONLY a JSON array of 8 multiple-choice questions: [{"q":"","options":["","","",""],"answer":0,"why":"one sentence"}]. "answer" is the zero-based index of the correct option; vary its position. Match the style of the stated exam (for example NCERT-based, assertion-reason and case-based for CBSE; application-level for JEE and NEET; statement-based for UPSC prelims). Write the text values in the stated language.`,{override:o,parse:t=>{const a=parseJSON(t);if(!Array.isArray(a)||!a.length||a.some(q=>!q||typeof q.q!=='string'||!Array.isArray(q.options)||q.options.length<2||!Number.isInteger(q.answer)||q.answer<0||q.answer>=q.options.length))throw bad();return a;}});},
+  visuals(p,o){return ask('visuals',`${ctx(p)}\n\nReturn ONLY JSON: {"mindmap":{"center":"","branches":[{"label":"","kids":["",""]}]},"flow":{"title":"","steps":[""]}} with 5 branches of 2 kids each and 5 flow steps. Every label under 5 words, in the stated language.`,{override:o,parse:t=>{const a=parseJSON(t);if(!a||!a.mindmap||!Array.isArray(a.mindmap.branches)||!a.mindmap.branches.length)throw bad();return a;}});},
+  async sources(){
+    return {by:{name:'Built-in list'},value:{verified:true,items:[
+      {title:'NCERT textbooks and e-books',url:'https://ncert.nic.in/',type:'Reference',why:'Official school textbooks used by CBSE and many state boards.'},
+      {title:'ePathshala',url:'https://epathshala.nic.in/',type:'Reference',why:'NCERT e-books and learning material in several languages.'},
+      {title:'DIKSHA',url:'https://diksha.gov.in/',type:'Course',why:'Government platform with lessons and practice linked to school curricula.'},
+      {title:'CBSE Academic',url:'https://cbseacademic.nic.in/',type:'Reference',why:'Official CBSE syllabus, sample papers and marking schemes.'},
+      {title:'NTA (JEE Main, NEET, CUET)',url:'https://nta.ac.in/',type:'Reference',why:'Official notices, syllabus and pattern for national entrance exams.'},
+      {title:'UPSC',url:'https://upsc.gov.in/',type:'Reference',why:'Official syllabus and notices for the Civil Services exams.'},
+      {title:'SWAYAM',url:'https://swayam.gov.in/',type:'Course',why:'Free university-level online courses from Indian institutions.'},
+      {title:'NPTEL',url:'https://nptel.ac.in/',type:'Course',why:'IIT and IISc video lectures and notes for engineering and science.'},
+      {title:'UGC',url:'https://www.ugc.gov.in/',type:'Reference',why:'University guidelines and UGC NET information.'},
+      {title:'Khan Academy',url:'https://www.khanacademy.org/',type:'Video',why:'Free video lessons and practice for maths and science.'}
+    ]}};
+  }
+};
+
+/* ---------- math (LaTeX-style) ---------- */
+const TEXSYM={circ:'°',parallel:'∥',perp:'⊥',angle:'∠',triangle:'△',times:'×',cdot:'·',div:'÷',pm:'±',mp:'∓',neq:'≠',ne:'≠',leq:'≤',le:'≤',geq:'≥',ge:'≥',approx:'≈',equiv:'≡',cong:'≅',sim:'∼',propto:'∝',infty:'∞',pi:'π',theta:'θ',alpha:'α',beta:'β',gamma:'γ',delta:'δ',Delta:'Δ',lambda:'λ',mu:'μ',sigma:'σ',Sigma:'Σ',omega:'ω',Omega:'Ω',phi:'φ',rho:'ρ',epsilon:'ε',therefore:'∴',because:'∵',Rightarrow:'⇒',rightarrow:'→',to:'→',leftarrow:'←',Leftrightarrow:'⇔',leftrightarrow:'↔',in:'∈',notin:'∉',subset:'⊂',cup:'∪',cap:'∩',forall:'∀',exists:'∃',degree:'°',ldots:'…',dots:'…',cdots:'⋯',vert:'|',mid:'|',overrightarrow:'',vec:'',bar:'',hat:'',quad:' ',qquad:'  ',int:'∫',iint:'∬',oint:'∮',sum:'∑',prod:'∏',partial:'∂',nabla:'∇',lim:'lim',sin:'sin',cos:'cos',tan:'tan',log:'log',ln:'ln',max:'max',min:'min',det:'det',hbar:'ℏ',ell:'ℓ',Pi:'Π',Theta:'Θ',Lambda:'Λ',Phi:'Φ',Psi:'Ψ',psi:'ψ',tau:'τ',eta:'η',kappa:'κ',nu:'ν',xi:'ξ',zeta:'ζ',chi:'χ',varepsilon:'ε',varphi:'φ',mathbb:'',subseteq:'⊆',supset:'⊃',emptyset:'∅',varnothing:'∅',neg:'¬',land:'∧',lor:'∨',implies:'⇒',iff:'⇔',longrightarrow:'⟶',mapsto:'↦',uparrow:'↑',downarrow:'↓',prime:'′',ll:'≪',gg:'≫',lt:'<',gt:'>',lceil:'⌈',rceil:'⌉',lfloor:'⌊',rfloor:'⌋',langle:'⟨',rangle:'⟩',star:'⋆',ast:'∗',oplus:'⊕',otimes:'⊗',odot:'⊙',hline:''};
+function tex(t){
+  t=t.replace(/\\begin\s*\{(p|b|v|B|V)?matrix\}([\s\S]*?)\\end\s*\{(?:p|b|v|B|V)?matrix\}/g,(m,k,b)=>{const br={p:['(',')'],b:['[',']'],v:['|','|'],B:['{','}'],V:['‖','‖']}[k]||['',''];return br[0]+'<span class="mt">'+b.trim().split(/\\\\/).map(r=>'<span>'+r.split('&amp;').map(c=>'<i>'+c.trim()+'</i>').join('')+'</span>').join('')+'</span>'+br[1];});
+  t=t.replace(/\\binom\s*\{([^{}]*)\}\s*\{([^{}]*)\}/g,'(<span class="fr"><span>$1</span><span>$2</span></span>)').replace(/\\(?:overline|bar)\s*\{([^{}]*)\}/g,'<span class="rt" style="border-top:1px solid currentColor">$1</span>').replace(/\\(?:vec|overrightarrow)\s*\{([^{}]*)\}/g,'$1\u20D7').replace(/\\hat\s*\{([^{}]*)\}/g,'$1\u0302').replace(/\\sqrt\s*\[([^\]]*)\]\s*\{([^{}]*)\}/g,'<sup>$1</sup>√<span class="rt">$2</span>');
+  t=t.replace(/\\(?:text|mathrm|mathbf|textbf|operatorname|mbox)\s*\{([^{}]*)\}/g,'$1').replace(/\\(?:left|right|big|Big)\s*/g,'');
+  for(let i=0;i<4;i++){
+    t=t.replace(/\\sqrt\s*\{([^{}]*)\}/g,'√<span class="rt">$1</span>').replace(/\\sqrt\s*(\w)/g,'√<span class="rt">$1</span>');
+    t=t.replace(/\^\{([^{}]*)\}/g,'<sup>$1</sup>').replace(/_\{([^{}]*)\}/g,'<sub>$1</sub>');
+    t=t.replace(/\\[dt]?frac\s*\{([^{}]*)\}\s*\{([^{}]*)\}/g,'<span class="fr"><span>$1</span><span>$2</span></span>');
+  }
+  t=t.replace(/\\([A-Za-z]+)/g,(m,n)=>n in TEXSYM?TEXSYM[n]:n);
+  t=t.replace(/\\[,;:!]/g,' ').replace(/\\\\/g,' ').replace(/\\([{}%&#_$])/g,'$1');
+  for(let i=0;i<3;i++){
+    t=t.replace(/\^\{([^{}]*)\}/g,'<sup>$1</sup>').replace(/_\{([^{}]*)\}/g,'<sub>$1</sub>');
+  }
+  t=t.replace(/\^(\S)/g,'<sup>$1</sup>').replace(/_(\S)/g,'<sub>$1</sub>');
+  return t.replace(/[{}]/g,'');
+}
+function mathify(e,keep){
+  const H=[];
+  const put=(t,disp)=>{let h=null;
+    if(window.katex){try{h='<span class="kx'+(disp?' disp':'')+'">'+katex.renderToString(t.replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&amp;/g,'&'),{displayMode:!!disp,throwOnError:true,strict:false,trust:false,output:'html'})+'</span>';}catch(e){h=null;}}
+    if(h===null)h='<span class="math'+(disp?' disp':'')+'">'+tex(t)+'</span>';
+    H.push(h);return '\u0001'+(H.length-1)+'\u0002';};
+  e=e.replace(/\$\$([\s\S]+?)\$\$/g,(m,t)=>put(t,1)).replace(/\\\[([\s\S]+?)\\\]/g,(m,t)=>put(t,1))
+     .replace(/\\\(([\s\S]+?)\\\)/g,(m,t)=>put(t)).replace(/\$(?!\s)([^$\n]+?)(?<!\s)\$/g,(m,t)=>put(t));
+  return {text:e,back:x=>x.replace(/\u0001(\d+)\u0002/g,(m,i)=>H[+i])};
+}
+const mx=s=>{const r=mathify(esc(s));return r.back(r.text);};
+
+/* ---------- markdown, voice, mind map ---------- */
+function md(src){
+  const MJ=mathify(esc(src));
+  const inl=s=>s.replace(/`([^`]+)`/g,'<code>$1</code>').replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>').replace(/\*([^*]+)\*/g,'<em>$1</em>');
+  let out='',list=false,m;
+  for(const l of MJ.text.split('\n')){
+    if((m=l.match(/^(#{1,4})\s+(.*)/))){if(list){out+='</ul>';list=false;}const n=Math.min(4,m[1].length+1);out+=`<h${n}>${inl(m[2])}</h${n}>`;}
+    else if((m=l.match(/^\s*[-*]\s+(.*)/))){if(!list){out+='<ul>';list=true;}out+=`<li>${inl(m[1])}</li>`;}
+    else{if(list){out+='</ul>';list=false;}if(l.trim())out+=`<p>${inl(l)}</p>`;}
+  }
+  return MJ.back(list?out+'</ul>':out);
+}
+function say(text,lang){
+  try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(String(text).replace(/\$([^$]*)\$/g,(m,t)=>t.replace(/\\circ/g,' degrees ').replace(/\\parallel/g,' parallel to ').replace(/\\perp/g,' perpendicular to ').replace(/\\angle/g,' angle ').replace(/\\[a-zA-Z]+/g,' ').replace(/[{}^_]/g,' ')).replace(/[#*`_>|-]/g,' '));u.lang=lang;speechSynthesis.speak(u);}catch(e){toast('Voice is not available in this browser.');}
+}
+const langCode=p=>p&&p.language==='Hindi'?'hi-IN':'en-IN';
+function toast(t){const b=document.createElement('div');b.className='hint';b.style.cssText='position:fixed;left:16px;right:16px;bottom:16px;max-width:420px;margin:auto;z-index:9;border:1px solid var(--line)';b.textContent=t;document.body.appendChild(b);setTimeout(()=>b.remove(),2600);}
+function wrapT(t,m){const w=String(t).split(' ');const L=[];let c='';for(const x of w){if((c+' '+x).trim().length>m&&c){L.push(c);c=x;}else c=(c+' '+x).trim();}if(c)L.push(c);return L.slice(0,3);}
+function mindSVG(m){
+  const W=900,H=640,cx=W/2,cy=H/2,cols=['#FFE14D','#FF8FA8','#8493FF','#5EE0BE','#FFA866','#B58CFF'],br=(m.branches||[]).slice(0,6);
+  const box=(x,y,t,fill,fs,max,txt,st)=>{const L=wrapT(t,max),w=Math.max(...L.map(l=>l.length))*fs*.58+24,h=L.length*(fs+4)+14;
+    return `<g><rect x="${(x-w/2).toFixed(1)}" y="${(y-h/2).toFixed(1)}" width="${w.toFixed(1)}" height="${h}" rx="${Math.min(14,h/2)}" fill="${fill}" stroke="${st||'none'}" stroke-width="2"/>`+L.map((l,i)=>`<text x="${x.toFixed(1)}" y="${(y-h/2+6+fs+i*(fs+4)).toFixed(1)}" text-anchor="middle" font-size="${fs}" font-weight="700" fill="${txt||'#0A1428'}" font-family="Trebuchet MS,Arial,sans-serif">${esc(l)}</text>`).join('')+'</g>';};
+  let lines='',nodes='';
+  br.forEach((b,i)=>{
+    const a=-Math.PI/2+2*Math.PI*i/br.length,bx=cx+Math.cos(a)*215,by=cy+Math.sin(a)*185,col=cols[i%6],kids=(b.kids||[]).slice(0,3);
+    lines+=`<line x1="${cx}" y1="${cy}" x2="${bx.toFixed(1)}" y2="${by.toFixed(1)}" stroke="${col}" stroke-width="5" stroke-linecap="round"/>`;
+    kids.forEach((k,j)=>{const ka=a+(j-(kids.length-1)/2)*.38,kx=cx+Math.cos(ka)*370,ky=cy+Math.sin(ka)*262;
+      lines+=`<line x1="${bx.toFixed(1)}" y1="${by.toFixed(1)}" x2="${kx.toFixed(1)}" y2="${ky.toFixed(1)}" stroke="${col}" stroke-width="3" stroke-linecap="round"/>`;
+      nodes+=box(kx,ky,k,'#101E3C',13,16,'#E9EEFB',col);});
+    nodes+=box(bx,by,b.label,col,15,14);
+  });
+  nodes+=box(cx,cy,m.center||'Topic','#F5C94C',19,14,'#1A1405');
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Mind map"><rect width="${W}" height="${H}" fill="#07101F"/>${lines}${nodes}</svg>`;
+}
+
+/* ---------- state & actions ---------- */
+let tab='plan',showSet=false,busy={},tutorSel='auto',seed=1;
+const TABS={plan:'Plan',notes:'Notes',qna:'Q&A',cards:'Cards',quiz:'Quiz',visuals:'Visuals',sources:'Sources',tutor:'Tutor'};
+const SUGG={
+  'School':['CBSE','ICSE / ISC','Maharashtra State Board','Tamil Nadu State Board','Karnataka State Board','UP Board','Bihar Board','West Bengal Board','Kerala State Board','Gujarat Board','NIOS','Other state board'],
+  'Competitive exam':['JEE Main','JEE Advanced','NEET UG','CUET UG','CLAT','NDA','UPSC Civil Services','State PSC','SSC CGL','IBPS / SBI Banking','RRB NTPC','GATE','CAT','UGC NET','CA Foundation / Inter','CS Executive','NEET PG'],
+  'Undergraduate':['B.Tech / B.E.','MBBS','B.Sc','B.A.','B.Com','BBA','BCA','LLB','B.Pharm','B.Arch','BDS','Nursing'],
+  'Postgraduate / Research':['M.Tech','M.Sc','MBA','M.A.','M.Com','MCA','LLM','MD / MS','PhD'],
+  'Other':['SWAYAM / NPTEL course','Diploma / ITI','Polytechnic','Other']
+};
+const PH={'School':'e.g. Class 10','Competitive exam':'e.g. Class 12 or dropper','Undergraduate':'e.g. Year 2, Semester 4','Postgraduate / Research':'e.g. Year 1, Semester 2','Other':'e.g. Beginner'};
+const PRESETS=[
+  {label:'CBSE Class 10 Science',stage:'School',board:'CBSE',grade:'Class 10',subject:'Science',topic:'Light: Reflection and Refraction'},
+  {label:'CBSE Class 12 Physics',stage:'School',board:'CBSE',grade:'Class 12',subject:'Physics',topic:'Current Electricity'},
+  {label:'JEE Main Maths',stage:'Competitive exam',board:'JEE Main',grade:'Class 12',subject:'Mathematics',topic:'Limits, continuity and differentiability'},
+  {label:'NEET Biology',stage:'Competitive exam',board:'NEET UG',grade:'Class 11',subject:'Biology',topic:'Breathing and exchange of gases'},
+  {label:'UPSC Polity',stage:'Competitive exam',board:'UPSC Civil Services',grade:'Prelims and Mains',subject:'Indian Polity',topic:'Fundamental Rights and Directive Principles'},
+  {label:'B.Tech Data Structures',stage:'Undergraduate',board:'B.Tech / B.E.',grade:'Year 2, Semester 3',subject:'Data Structures',topic:'Binary trees and traversals'}
+];
+function applyStage(){
+  const st=$('#stage');if(!st)return;
+  $('#boards').innerHTML=(SUGG[st.value]||[]).map(x=>`<option value="${esc(x)}"></option>`).join('');
+  const g=$('#grade');if(g)g.placeholder=PH[st.value]||'';
+}
+async function run(p,kind,override){
+  const bk=p.id+kind;if(busy[bk])return;
+  busy[bk]=true;if(p.err)delete p.err[kind];render();
+  const sz=p.nsize||'standard';
+  try{
+    const r=await GEN[kind](p,override);
+    p.by=p.by||{};p.by[kind]=r.by.name;
+    if(kind==='notes'){p.nc=p.nc||{};p.nc[sz]=r.value;if((p.nsize||'standard')===sz)p.notes=r.value;}
+    else p[kind]=r.value;
+    if(kind==='quiz')p.qa={};
+    save();
+  }catch(e){p.err=p.err||{};p.err[kind]=e.message||'Something went wrong.';}
+  busy[bk]=false;render();
+}
+function regen(p,k,override){
+  p[k]=null;if(p.err)delete p.err[k];
+  if(k==='notes'&&p.nc)delete p.nc[p.nsize||'standard'];
+  run(p,k,override);
+}
+function ensure(p){
+  if(tab==='tutor')return;
+  if(!p[tab]&&!busy[p.id+tab]&&!(p.err&&p.err[tab]))run(p,tab);
+}
+const plainOf=(p,k)=>{const v=p[k];if(typeof v==='string')return v;if(!v)return '';
+  if(k==='cards')return v.map(c=>c.front+' = '+c.back).join('\n');
+  if(k==='quiz')return v.map((q,i)=>(i+1)+'. '+q.q+' Options: '+q.options.join(' / ')+' | Marked correct: '+q.options[q.answer]).join('\n');
+  if(k==='qna')return v.map(x=>x.q+'\nAnswer: '+x.answer).join('\n\n');return '';};
+async function check(p,k){
+  const bk=p.id+'check'+k;if(busy[bk])return;busy[bk]=true;if(p.err)delete p.err['check'+k];render();
+  const first=(p.by&&p.by[k])||'';
+  try{
+    const r=await ask('check',`${ctx(p)}\n\nAnother AI wrote this ${TABS[k]} material. Check it like a strict teacher. List factual errors, doubtful claims, wrong marked answers, or missing exam-important points as short bullets. If it is all correct, say so. Max 150 words, in the stated language.\n\n${plainOf(p,k).slice(0,7000)}`,{exclude:first});
+    p.checks=p.checks||{};p.checks[k]={by:r.by.name,text:r.value,same:r.by.name===first};save();
+  }catch(e){p.err=p.err||{};p.err['check'+k]=e.message;}
+  busy[bk]=false;render();
+}
+const hist=p=>{const h=(p.chat||[]).slice(-8).map(m=>({role:m.role,content:m.content||'(no answer)'}));while(h.length&&h[0].role!=='user')h.shift();return h;};
+async function send(p,text){
+  p.chat=p.chat||[];p.chat.push({role:'user',content:text});busy[p.id+'chat']=true;render();
+  const sys=SYS+`\nThe student is studying: ${ctx(p).replace(/\n/g,'; ')}. Answer their questions clearly with short examples. Use Markdown sparingly.`;
+  try{
+    if(tutorSel==='all'){const rs=await askAll(sys,hist(p));const ok=rs.find(x=>x.text);p.chat.push({role:'assistant',content:ok?ok.text:'',multi:rs});}
+    else{const r=await ask('tutor',hist(p),{system:sys,override:tutorSel==='auto'?'':tutorSel});p.chat.push({role:'assistant',content:r.value.trim(),by:r.by.name});}
+    save();
+  }catch(e){p.chat.push({role:'assistant',content:'Sorry, that failed: '+e.message});}
+  busy[p.id+'chat']=false;render();
+}
+async function merge(p,i){
+  const m=p.chat[i],q=(p.chat[i-1]||{}).content||'';
+  const good=(m.multi||[]).filter(x=>x.text);if(good.length<2){toast('Need at least two answers to merge.');return;}
+  busy[p.id+'chat']=true;render();
+  try{
+    const r=await ask('tutor',`A student asked: ${q}\n\nSeveral AI tutors answered:\n\n${good.map((x,j)=>'Answer '+(j+1)+' ('+x.by+'):\n'+x.text).join('\n\n')}\n\nWrite one best final answer in under 200 words. Keep what they agree on. Where they disagree, choose what is most likely correct and tell the student to verify that point in the textbook.`,{system:SYS});
+    p.chat.push({role:'assistant',content:r.value.trim(),by:'Best answer, merged ('+r.by.name+')'});save();
+  }catch(e){p.chat.push({role:'assistant',content:'Sorry, merging failed: '+e.message});}
+  busy[p.id+'chat']=false;render();
+}
+
+/* ---------- views ---------- */
+const ic=(d,s=22)=>`<svg viewBox="0 0 24 24" width="${s}" height="${s}" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+const ICO={
+  plan:ic('<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 3v4M16 3v4M4 10h16M9 15h6"/>'),
+  notes:ic('<path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4M9.5 12h6M9.5 16h6"/>'),
+  qna:ic('<path d="M4 6a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v7a3 3 0 0 1-3 3h-6l-4 4v-4H7a3 3 0 0 1-3-3z"/><path d="M9 9.5h.01M12 9.5h.01M15 9.5h.01"/>'),
+  cards:ic('<rect x="3.5" y="7" width="13" height="13" rx="2.5"/><path d="M7.5 7V5.5A2.5 2.5 0 0 1 10 3h8.5A2.5 2.5 0 0 1 21 5.5V14a2.5 2.5 0 0 1-2.5 2.5H17"/>'),
+  quiz:ic('<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.6 2.2c-.7.4-1.1.9-1.1 1.8M12 17h.01"/>'),
+  visuals:ic('<circle cx="12" cy="12" r="2.5"/><circle cx="5" cy="6" r="2"/><circle cx="19" cy="6" r="2"/><circle cx="12" cy="20" r="2"/><path d="M6.5 7.5l3.5 3M17.5 7.5l-3.5 3M12 14.5V18"/>'),
+  sources:ic('<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>'),
+  tutor:ic('<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M18.5 16l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/>'),
+  plus:ic('<path d="M12 5v14M5 12h14"/>',24),
+  topic:ic('<path d="M5 4h10a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M8 17h10"/>',20)
+};
+const HEX='<svg class="hex" viewBox="0 0 64 64" width="64" height="64" fill="none" aria-hidden="true"><path d="M32 3l25 14.5v29L32 61 7 46.5v-29z" stroke="#4FD8F0" stroke-width="1.6"/><path d="M24 22h22l-6 20H18z" stroke="#F5C94C" stroke-width="1.8" stroke-linejoin="round"/><circle cx="24" cy="22" r="2" fill="#4FD8F0"/><circle cx="46" cy="22" r="2" fill="#4FD8F0"/><circle cx="40" cy="42" r="2" fill="#4FD8F0"/><circle cx="18" cy="42" r="2" fill="#4FD8F0"/></svg>';
+const ORB='<svg class="orb" viewBox="0 0 260 200" fill="none" aria-hidden="true"><ellipse cx="140" cy="100" rx="118" ry="52" transform="rotate(-38 140 100)" stroke="#4FD8F0" stroke-opacity=".7" stroke-width="1.3"/><ellipse cx="140" cy="100" rx="86" ry="36" transform="rotate(-38 140 100)" stroke="#4F8CFF" stroke-opacity=".45"/><path d="M140 40l60 40-20 60-60 20-40-50z" stroke="#4F8CFF" stroke-opacity=".3"/><circle cx="140" cy="100" r="6" fill="#F5C94C"/><circle cx="140" cy="100" r="14" fill="#F5C94C" opacity=".18"/><circle cx="226" cy="28" r="3" fill="#F5C94C"/><circle cx="96" cy="150" r="3" fill="#F5C94C"/></svg>';
+function planView(src){
+  const secs=[],intro=[];let c=null;
+  for(const l of String(src).split('\n')){
+    const m=l.match(/^#{1,4}\s+(.*)/);
+    if(m){c={t:m[1].replace(/\*+/g,'').trim(),b:[]};secs.push(c);}else if(c)c.b.push(l);else intro.push(l);
+  }
+  if(!secs.length)return `<div class="prev">${md(src)}</div>`;
+  const p=cur()||{},unit=/^week/i.test(secs[0].t)?'week':'day';
+  const n=secs.filter(s=>/^(day|week)\s*\d/i.test(s.t)).length;
+  const lead=`<div class="lead"><span class="ic">${ICO.notes}</span><div><p>${n?`Here is a focused ${n}-${unit} study plan for `:'Here is your study plan for '}<strong>${esc(p.topic||'this topic')}</strong>${p.board?`, tailored for ${esc(p.board)} preparation`:''}.</p>${intro.join('').trim()?`<div class="prev">${md(intro.join('\n'))}</div>`:''}</div></div>`;
+  return lead+secs.map((s,i)=>{
+    const m=s.t.match(/^((?:day|week|session|phase)\s*\d+)\s*[:\-–—.]?\s*(.*)$/i);
+    const tag=m?m[1].replace(/^\w/,x=>x.toUpperCase()).replace(/\s+/,' '):String(i+1);
+    return `<article class="day"><div class="dayhead"><span class="dayno">${esc(tag)}</span><h3>${mx((m&&m[2])||s.t)}</h3></div><div class="prev">${md(s.b.join('\n'))}</div></article>`;
+  }).join('');
+}
+function render(){
+  const p=cur();
+  $('#lib').innerHTML=D.projects.map(x=>`<button class="chip" data-act="open" data-id="${x.id}" aria-pressed="${x.id===D.cur}" title="${esc(x.topic)}"><span class="ci">${ICO.topic}</span><span class="cl">${esc(x.topic)}</span></button>`).join('')+`<button class="chip" data-act="new" aria-pressed="${!p}"><span class="ci">${ICO.plus}</span><span class="cl">New topic</span></button>`;
+  const ready=D.providers.filter(usable),keyed=ready.filter(x=>K(x).nk);
+  $('#hint').innerHTML=(!ready.length?`<div class="hint">No AI is on yet. Tap "AI &amp; settings" and add at least one. Pollinations needs no key.</div>`:!keyed.length?`<div class="hint">You are using ${ready.length} AI without a key. For better results, add a free Gemini or Groq key under "AI &amp; settings".</div>`:'')+(!persistent?`<div class="hint">Saving is off in this preview. Download the file and open it in Chrome to keep your study kits and AI keys.</div>`:'');
+  $('#set').hidden=!showSet;
+  const tq=$('#tq'),tv=tq&&tq.value,tf=tq&&document.activeElement===tq;
+  $('#main').innerHTML=p?project(p):home();
+  if(!p)applyStage();
+  if(tv){const n=$('#tq');if(n){n.value=tv;if(tf)n.focus();}}
+  if(p)ensure(p);
+}
+function home(){
+  return `<div class="panel"><h1>What are you studying?</h1><p class="muted" style="margin-top:8px">Pick your board, exam or course, then a subject and chapter. Study Scout builds a plan, notes, exam-style questions, flashcards, a quiz, visuals and free resources. Several AIs can work together on them.</p>
+  <div class="chips wrap" style="margin:16px 0 0">${PRESETS.map((x,i)=>`<button type="button" class="chip" data-act="preset" data-i="${i}">${esc(x.label)}</button>`).join('')}</div>
+  <form class="form" data-form="new">
+    <label>Stage<select name="stage" id="stage"><option>School</option><option>Competitive exam</option><option>Undergraduate</option><option>Postgraduate / Research</option><option>Other</option></select></label>
+    <label>Board, exam or course<input name="board" id="board" list="boards" required maxlength="80" placeholder="e.g. CBSE, JEE Main, B.Tech"><datalist id="boards"></datalist></label>
+    <label>Class, year or semester<input name="grade" id="grade" maxlength="60"></label>
+    <label>Subject<input name="subject" required maxlength="80" placeholder="e.g. Physics, Indian Polity"></label>
+    <label class="full">Chapter or topic<input name="topic" required maxlength="140" placeholder="e.g. Current Electricity"></label>
+    <label>Language<select name="language"><option>English</option><option>Hindi</option><option>Hinglish</option></select></label>
+    <label>Days available (optional)<input name="days" type="number" min="1" max="365" placeholder="e.g. 7"></label>
+    <label class="full">Goal (optional)<input name="goal" maxlength="160" placeholder="e.g. score 90+ in boards, crack JEE Main"></label>
+    <div class="full"><button class="btn primary big">Build my study kit</button></div>
+  </form>
+  <p class="muted" style="margin-top:16px;font-size:14px">Syllabi and exam patterns change every year. Always confirm with your official syllabus (NCERT, your board, or the exam's website). AI-written notes can contain mistakes.</p></div>`;
+}
+const loading=t=>`<div class="load"><div class="spin"></div><span>${t}</span></div>`;
+const errBox=(p,k)=>`<div class="err"><span>${esc(p.err[k])}</span><button class="btn" data-act="regen" data-k="${k}">Try again</button></div>`;
+const provOpts=first=>`<option value="">${first}</option>`+D.providers.filter(usable).map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join('');
+function project(p){
+  const meta=[p.stage,p.board,p.grade,p.subject,p.language&&p.language!=='English'?p.language:'',p.days?p.days+' days':'',p.goal].filter(Boolean).map(esc).join(', ');
+  let h=`<div class="hero">${HEX}<div><h1>${esc(p.topic)}</h1><p class="meta">${meta}</p></div>${ORB}</div>
+  <div class="seg" role="tablist">${Object.keys(TABS).map(k=>`<button data-act="tab" data-k="${k}" aria-pressed="${tab===k}">${ICO[k]||''}<span>${TABS[k]}</span></button>`).join('')}</div><div class="panel${tab==='plan'&&p.plan?' bare':''}">`;
+  h+=body(p)+`</div><p class="muted" style="margin-top:14px;font-size:14px">Confirm the syllabus on your official source (NCERT, your board, or the exam website). AI notes can contain mistakes, so use Cross-check.</p><div style="margin-top:14px"><button class="btn danger" data-act="del" data-arm>Delete this study kit</button></div>`;
+  return h;
+}
+function body(p){
+  const k=tab;
+  if(k==='tutor')return tutor(p);
+  if(busy[p.id+k])return (k==='notes'?sizeSeg(p):'')+loading(k==='sources'?'Loading...':'Building this for you...');
+  if(p.err&&p.err[k])return (k==='notes'?sizeSeg(p):'')+errBox(p,k);
+  if(!p[k])return (k==='notes'?sizeSeg(p):'')+loading('Getting ready...');
+  const byLine=p.by&&p.by[k]&&k!=='sources'?`<p class="muted small" style="margin-top:10px">Made by ${esc(p.by[k])}</p>`:'';
+  const second=()=>{const bk=p.id+'check'+k;if(busy[bk])return loading('A second AI is checking this...');
+    if(p.err&&p.err['check'+k])return `<div class="err" style="margin-top:14px"><span>${esc(p.err['check'+k])}</span></div>`;
+    const c=p.checks&&p.checks[k];return c?`<div class="second prev"><b>Second opinion from ${esc(c.by)}</b>${c.same?'<p class="muted small">This was the same AI. Add another AI in settings for an independent check.</p>':''}${md(c.text)}</div>`:'';};
+  const tools=(extra,chk=true)=>`<div class="row" style="margin-top:18px"><button class="btn" data-act="regen" data-k="${k}">Regenerate</button><select class="mini" data-act="regenwith" data-k="${k}" aria-label="Regenerate with a chosen AI">${provOpts('Regenerate with…')}</select>${chk?`<button class="btn" data-act="check" data-k="${k}">Cross-check with another AI</button>`:''}${extra||''}</div>${byLine}${chk?second():''}`;
+  if(k==='plan'||k==='notes')return (k==='notes'?sizeSeg(p):'')+(k==='plan'?planView(p.plan):`<div class="prev notes" style="font-size:${fsPx()}px">${md(p[k])}</div>`)+tools(`<button class="btn" data-act="dl" data-k="${k}">Download .md</button>`+(k==='notes'?`<button class="btn" data-act="read">🔊 Read aloud</button>`:''));
+  if(k==='cards'){
+    const lines=p.cards.map(c=>c.front.replace(/\|/g,'/')+' | '+c.back.replace(/\|/g,'/')).join('\n');
+    return `<p class="muted" style="margin-bottom:12px">Tap a question to reveal the answer.</p><div class="stack">${p.cards.map(c=>`<details><summary>${mx(c.front)}</summary><p>${mx(c.back)}</p></details>`).join('')}</div>
+    <details style="margin-top:16px"><summary>Export cards</summary><p>Copy these cards (question | answer) into any flashcard app.</p><textarea id="exp" readonly>${esc(lines)}</textarea><div style="margin-top:10px"><button class="btn" data-act="copy">Copy cards</button></div></details>`+tools();
+  }
+  if(k==='quiz'){
+    const qa=p.qa||{},n=p.quiz.length,done=Object.keys(qa).length,score=p.quiz.filter((q,i)=>qa[i]===q.answer).length;
+    return `<div class="stack">${p.quiz.map((q,i)=>{const a=qa[i];return `<div><h3>${i+1}. ${mx(q.q)}</h3><div class="opts">${q.options.map((o,j)=>`<button class="opt ${a!==undefined?(j===q.answer?'right':j===a?'wrong':''):''}" data-act="ans" data-i="${i}" data-j="${j}" ${a!==undefined?'disabled':''}>${mx(o)}</button>`).join('')}</div>${a!==undefined&&q.why?`<p class="muted">${mx(q.why)}</p>`:''}</div>`;}).join('')}</div>
+    ${done===n?`<p class="score" style="margin-top:18px">You scored ${score} of ${n}</p>`:`<p class="muted" style="margin-top:16px">${done} of ${n} answered</p>`}`+tools(`<button class="btn" data-act="retake">Retake</button>`);
+  }
+  if(k==='qna'){
+    return `<p class="muted" style="margin-bottom:12px">Try writing your own answer first, then open the model answer. These are practice questions with estimated marks, not real past papers.</p><div class="stack">${p.qna.map(x=>`<details><summary><span class="tagt">${x.marks?esc(x.marks)+' marks':'Practice'}</span>${x.chance?`<span class="tagt" style="background:var(--soft);color:var(--ink)">${esc(x.chance)} chance</span>`:''}${mx(x.q)}</summary><div class="prev">${md(x.answer)}</div>${Array.isArray(x.keywords)&&x.keywords.length?`<p>Keywords examiners look for: ${x.keywords.map(esc).join(', ')}</p>`:''}</details>`).join('')}</div>`+tools();
+  }
+  if(k==='visuals'){
+    const v=p.visuals,f=v.flow||{},q=encodeURIComponent(p.imgPrompt||`colorful educational illustration explaining ${p.topic}, clean flat style, no text`);
+    return `<div class="fig">${mindSVG(v.mindmap)}</div>
+    ${(f.steps||[]).length?`<h3 style="margin-top:20px">${esc(f.title||'Steps')}</h3><div class="flow">${f.steps.map((s,i)=>`<div class="step"><b>${i+1}</b>${esc(s)}</div>`).join('')}</div>`:''}
+    <div class="pic" style="margin-top:22px"><h3 style="margin-bottom:10px">AI picture</h3><img src="https://image.pollinations.ai/prompt/${q}?width=768&height=512&nologo=true&seed=${seed}" alt="AI picture about ${esc(p.topic)}" onerror="this.replaceWith(Object.assign(document.createElement('p'),{className:'muted',textContent:'The picture service is busy. Tap Generate picture to try again.'}))">
+    <div class="row"><input id="ip" style="flex:1 1 200px;width:auto" placeholder="Describe the picture you want" value="${esc(p.imgPrompt||'')}"><button class="btn" data-act="newpic">Generate picture</button></div></div>`+tools(`<button class="btn" data-act="dlsvg">Download mind map</button>`,false);
+  }
+  if(k==='sources'){
+    const s=p.sources;
+    return `<div class="stack">${s.items.map(i=>`<a class="src" href="${esc(i.url)}" target="_blank" rel="noopener noreferrer"><b>${esc(i.title||i.url)}</b><span class="tagt">${esc(i.type||'Link')}</span>${esc(i.why||'')}<small>${esc(i.url)}</small></a>`).join('')}</div>`;
+  }
+  return '';
+}
+function sizeSeg(p){return `<div class="notebar">${sizeSeg0(p)}${fsCtl()}</div>`;}
+const FS_MIN=80,FS_MAX=180,FS_STEP=10;
+const fsPx=()=>16*(D.fs||100)/100;
+function fsCtl(){const f=D.fs||100;return `<div class="fsz" role="group" aria-label="Text size"><button data-act="fs" data-v="-1" aria-label="Smaller text" ${f<=FS_MIN?'disabled':''}>A<small>−</small></button><button class="pct" data-act="fs" data-v="0" title="Reset to 100%" aria-label="Reset text size to 100%">${f}%</button><button class="lg" data-act="fs" data-v="1" aria-label="Larger text" ${f>=FS_MAX?'disabled':''}>A<small>+</small></button></div>`;}
+function sizeSeg0(p){const s=p.nsize||'standard';let i=LV.findIndex(x=>x[0]===s);if(i<0)i=2;const lv=LV[i];
+  return `<div class="lenctl" role="group" aria-label="Notes length"><button data-act="nlen" data-v="-1" aria-label="Make notes shorter" ${i<=0?'disabled':''}>&minus; Shorter</button><div class="lenmid"><b>${lv[1]}</b><small>about ${lv[2]} words</small><span class="lendots" aria-hidden="true">${LV.map((x,k)=>`<i class="${k<=i?'on':''}"></i>`).join('')}</span></div><button data-act="nlen" data-v="1" aria-label="Make notes longer" ${i>=LV.length-1?'disabled':''}>Longer +</button></div>`;}
+function tutor(p){
+  const c=p.chat||[],bz=busy[p.id+'chat'];
+  const msgs=c.map((m,i)=>{
+    if(m.role==='user')return `<div class="msg user">${esc(m.content)}</div>`;
+    if(m.multi)return `<div class="msg ai"><p class="muted small">Answers from ${m.multi.length} AIs</p>${m.multi.map((x,j)=>`<details open><summary><span class="dot" style="background:${COL[j%COL.length]}"></span>${esc(x.by)}</summary>${x.err?`<p>${esc(x.err)}</p>`:`<div class="prev">${md(x.text)}</div>`}</details>`).join('')}<button class="btn sm" data-act="merge" data-i="${i}">Merge into one best answer</button></div>`;
+    return `<div class="msg ai">${md(m.content)}${m.by?`<p class="muted small">${esc(m.by)}</p>`:''}<button class="btn sm" data-act="say" data-i="${i}">🔊 Listen</button></div>`;
+  }).join('');
+  return `<div class="chat" aria-live="polite">${c.length?msgs:`<p class="muted">Ask anything about ${esc(p.topic)}. Choose one AI, let Auto pick, or ask all your AIs at once and compare their answers.</p>`}${bz?loading('Thinking...'):''}</div>
+  <div class="row" style="margin-bottom:10px"><label style="flex-direction:row;align-items:center;gap:8px">Ask <select id="tprov" class="mini"><option value="auto" ${tutorSel==='auto'?'selected':''}>Auto</option>${D.providers.filter(usable).map(x=>`<option value="${x.id}" ${tutorSel===x.id?'selected':''}>${esc(x.name)}</option>`).join('')}<option value="all" ${tutorSel==='all'?'selected':''}>All AIs (compare)</option></select></label></div>
+  <form class="row" data-form="chat" style="flex-wrap:nowrap"><input id="tq" name="q" placeholder="Ask your tutor" required autocomplete="off" aria-label="Your question"><button type="button" class="btn" data-act="mic" aria-label="Speak your question">🎤</button><button class="btn primary" ${bz?'disabled':''}>Send</button></form>`;
+}
+function provRow(pv,i){
+  const k=K(pv),ok=usable(pv);
+  return `<div class="prov" data-pid="${pv.id}"><div class="row between"><label class="chk"><input type="checkbox" data-pf="on" ${pv.on?'checked':''}><span class="dot" style="background:${COL[i%COL.length]}"></span>${esc(pv.name)}</label>
+  <div class="row"><button class="btn sm" data-act="up" aria-label="Move up">↑</button><button class="btn sm" data-act="down" aria-label="Move down">↓</button><button class="btn sm" data-act="test">Test</button><button class="btn sm danger" data-act="rm" data-arm>Remove</button></div></div>
+  <div class="form"><label>Name<input data-pf="name" value="${esc(pv.name)}" maxlength="40"></label><label>Model<input data-pf="model" value="${esc(pv.model)}" ${k.nokey&&pv.kind==='claudebuiltin'?'readonly':''}></label>
+  ${pv.kind==='custom'?`<label class="full">Base URL<input data-pf="base" value="${esc(pv.base)}" placeholder="https://.../v1"></label>`:''}
+  ${k.nokey?'':`<label class="full">API key${k.nk?'':' (optional)'}<input type="password" data-pf="key" autocomplete="off" value="${esc(pv.key)}" placeholder="${k.nk?'Paste your key':'Leave empty if not needed'}"></label>`}</div>
+  <p class="muted small">${esc(k.hint)} <b id="st-${pv.id}">${pv.on&&!ok?'Needs a key before it can be used.':''}</b></p></div>`;
+}
+function drawSet(){
+  const s=$('#set');
+  s.innerHTML=`<h3>AI &amp; settings</h3><p class="muted" style="margin:6px 0 12px">Add as many AIs as you like. Study Scout uses them from top to bottom. Keys stay in this browser and go only to that AI's company. Use this on your own device. If an AI says it could not connect, its server may block browser use, so use another.</p>
+  <div class="stack">${D.providers.map(provRow).join('')}</div>
+  <div class="row" style="margin-top:14px"><select id="addkind" style="flex:1 1 220px;width:auto">${Object.keys(KINDS).map(x=>`<option value="${x}">${esc(KINDS[x].label)}</option>`).join('')}</select><button class="btn primary" data-act="addprov">Add this AI</button></div>
+  <h3 style="margin-top:24px">Which AI does what</h3><p class="muted small" style="margin:4px 0 10px">Auto uses the first working AI in your list. Or pick a favourite for each job.</p>
+  <div class="form" style="margin-top:0">${Object.keys(TASKS).map(t=>`<label>${TASKS[t]}<select data-act="assign" data-t="${t}"><option value="auto">Auto</option>${D.providers.map(x=>`<option value="${x.id}" ${D.assign[t]===x.id?'selected':''}>${esc(x.name)}</option>`).join('')}</select></label>`).join('')}</div>
+  <label class="chk" style="margin-top:14px"><input type="checkbox" id="fb" ${D.fallback?'checked':''}>If an AI fails, try the next one</label>
+  <div class="row" style="margin-top:14px"><button class="btn primary" data-act="closeset">Done</button></div>`;
+}
+
+/* ---------- events ---------- */
+function armed(b){
+  if(b.dataset.armed)return true;
+  const o=b.textContent;b.dataset.armed='1';b.textContent='Click again to confirm';
+  setTimeout(()=>{if(b.isConnected){b.textContent=o;delete b.dataset.armed;}},3000);return false;
+}
+function download(name,text,type){
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type:type||'text/markdown'}));a.download=name;document.body.appendChild(a);a.click();a.remove();
+}
+function mic(p){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){toast('Voice input needs Google Chrome.');return;}
+  const r=new SR();r.lang=langCode(p);
+  r.onresult=e=>{const q=$('#tq');if(q){q.value=e.results[0][0].transcript;if(p&&!busy[p.id+'chat']){const t=q.value;q.value='';send(p,t);}}};
+  r.onerror=()=>toast('Could not hear you. Check microphone permission.');
+  try{r.start();toast('Listening…');}catch(e){}
+}
+document.addEventListener('click',e=>{
+  const el=e.target.closest('[data-act]');if(!el||el.tagName==='SELECT')return;
+  if(el.hasAttribute('data-arm')&&!armed(el))return;
+  const p=cur(),k=el.dataset.k,pr=el.closest('[data-pid]'),pv=pr&&D.providers.find(x=>x.id===pr.dataset.pid);
+  switch(el.dataset.act){
+    case 'settings':showSet=!showSet;if(showSet)drawSet();render();break;
+    case 'closeset':showSet=false;render();break;
+    case 'addprov':{D.providers.push(mk($('#addkind').value));save();drawSet();render();break;}
+    case 'rm':if(pv){D.providers=D.providers.filter(x=>x!==pv);Object.keys(D.assign).forEach(t=>{if(D.assign[t]===pv.id)D.assign[t]='auto';});save();drawSet();render();}break;
+    case 'up':case 'down':if(pv){const i=D.providers.indexOf(pv),j=i+(el.dataset.act==='up'?-1:1);if(j>=0&&j<D.providers.length){D.providers.splice(i,1);D.providers.splice(j,0,pv);save();drawSet();render();}}break;
+    case 'test':if(pv){const st=$('#st-'+pv.id);st.textContent='Testing…';callProvider(pv,'You are a test.',[{role:'user',content:'Reply with the single word: ok'}],60).then(()=>{st.textContent='✓ Working';delete H[pv.id];}).catch(err=>{st.textContent='✗ '+err.message;});}break;
+    case 'new':D.cur=null;save();render();break;
+    case 'open':D.cur=el.dataset.id;tab='plan';save();render();break;
+    case 'tab':tab=k;render();break;
+    case 'regen':if(p)regen(p,k);break;
+    case 'check':if(p)check(p,k);break;
+    case 'fs':{const d=+el.dataset.v;D.fs=d===0?100:Math.max(FS_MIN,Math.min(FS_MAX,(D.fs||100)+d*FS_STEP));save();render();break;}
+    case 'nlen':if(p){let i=LV.findIndex(x=>x[0]===(p.nsize||'standard'));if(i<0)i=2;i=Math.max(0,Math.min(LV.length-1,i+ +el.dataset.v));p.nsize=LV[i][0];p.notes=(p.nc&&p.nc[p.nsize])||null;if(p.err)delete p.err.notes;save();render();}break;
+    case 'nsize':if(p){p.nsize=el.dataset.v;p.notes=(p.nc&&p.nc[p.nsize])||null;if(p.err)delete p.err.notes;save();render();}break;
+    case 'read':if(p&&p.notes)say(p.notes,langCode(p));break;
+    case 'say':if(p)say(p.chat[+el.dataset.i].content,langCode(p));break;
+    case 'mic':mic(p);break;
+    case 'merge':if(p)merge(p,+el.dataset.i);break;
+    case 'dl':if(p)download((p.topic.replace(/[^\w]+/g,'-')+'-'+k+'.md').toLowerCase(),'# '+p.topic+'\n\n'+p[k]);break;
+    case 'dlsvg':if(p&&p.visuals)download((p.topic.replace(/[^\w]+/g,'-')+'-mindmap.svg').toLowerCase(),mindSVG(p.visuals.mindmap),'image/svg+xml');break;
+    case 'newpic':if(p){p.imgPrompt=($('#ip').value||'').trim();seed=Math.floor(Math.random()*99999);save();render();}break;
+    case 'copy':{const t=$('#exp');t.select();try{navigator.clipboard.writeText(t.value);}catch(err){try{document.execCommand('copy');}catch(e2){}}el.textContent='Copied';break;}
+    case 'ans':if(p){p.qa=p.qa||{};if(p.qa[el.dataset.i]===undefined){p.qa[el.dataset.i]=+el.dataset.j;save();render();}}break;
+    case 'retake':if(p){p.qa={};save();render();}break;
+    case 'preset':{const x=PRESETS[+el.dataset.i],f=$('form[data-form=new]');if(f&&x){['stage','board','grade','subject','topic'].forEach(n=>{f.elements[n].value=x[n];});applyStage();f.elements.topic.focus();}break;}
+    case 'del':D.projects=D.projects.filter(x=>x.id!==D.cur);D.cur=null;save();render();break;
+  }
+});
+document.addEventListener('change',e=>{
+  const t=e.target;
+  if(t.id==='stage')applyStage();
+  if(t.id==='tprov')tutorSel=t.value;
+  if(t.id==='fb'){D.fallback=t.checked;save();}
+  if(t.dataset.act==='assign'){D.assign[t.dataset.t]=t.value;save();}
+  if(t.dataset.act==='regenwith'&&t.value){const p=cur();if(p)regen(p,t.dataset.k,t.value);}
+  if(t.dataset.pf){
+    const pr=t.closest('[data-pid]'),pv=pr&&D.providers.find(x=>x.id===pr.dataset.pid);if(!pv)return;
+    const f=t.dataset.pf;pv[f]=t.type==='checkbox'?t.checked:t.value.trim();delete H[pv.id];save();
+    if(f==='on'||f==='name')drawSet();
+    render();
+  }
+});
+document.addEventListener('submit',e=>{
+  const f=e.target.dataset.form;if(!f)return;e.preventDefault();
+  const v=n=>(e.target.elements[n].value||'').trim();
+  if(f==='new'){
+    const p={id:uid(),stage:v('stage'),board:v('board'),grade:v('grade'),subject:v('subject'),topic:v('topic'),language:v('language'),days:v('days'),goal:v('goal'),nsize:'standard',chat:[],err:{}};
+    D.projects.push(p);D.cur=p.id;tab='plan';save();render();
+  }else if(f==='chat'){const p=cur();if(p&&v('q')&&!busy[p.id+'chat']){const q=v('q');e.target.reset();send(p,q);}}
+});
+
+render();
+})();
+</script>
+</body>
+</html>
